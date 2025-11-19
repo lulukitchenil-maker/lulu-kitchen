@@ -5,6 +5,7 @@ import Cart from './components/Cart';
 import OrderForm from './components/OrderForm';
 import OrderConfirmation from './components/OrderConfirmation';
 import ExitIntentPopup from './components/ExitIntentPopup';
+import VacationBanner from './components/VacationBanner';
 import Home from './pages/Home';
 import Menu from './pages/Menu';
 import About from './pages/About';
@@ -15,6 +16,7 @@ import Terms from './pages/Terms';
 import AdminReviews from './pages/AdminReviews';
 import AdminAddOns from './pages/AdminAddOns';
 import AdminRecommendations from './pages/AdminRecommendations';
+import AdminVacation from './pages/AdminVacation';
 import { LanguageProvider } from './hooks/useLanguage';
 import { CartProvider, useCart } from './hooks/useCart';
 import type { OrderDetails, MenuItem } from './types';
@@ -107,6 +109,9 @@ function Router() {
     case '/admin/recommendations':
       PageComponent = AdminRecommendations;
       break;
+    case '/admin/vacation':
+      PageComponent = AdminVacation;
+      break;
     default:
       PageComponent = Home;
   }
@@ -114,6 +119,7 @@ function Router() {
   return (
     <>
       <Header onCartClick={() => setIsCartOpen(true)} />
+      <VacationBanner />
       <main>
         <PageComponent {...pageProps} />
       </main>
