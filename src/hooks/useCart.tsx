@@ -20,7 +20,7 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 
 const STORAGE_KEY = 'lulu_k_cart';
 const FREE_SHIPPING_THRESHOLD = 800;
-const SHIPPING_COST = Number(import.meta.env.VITE_DELIVERY_FEE) || 20;
+const SHIPPING_COST = Number(import.meta.env.VITE_DELIVERY_FEE) || 40;
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [cartItems, setCartItems] = useState<CartItem[]>(() => {
