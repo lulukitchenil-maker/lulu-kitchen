@@ -1,0 +1,83 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Hebrew:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply font-sans bg-gray-50;
+  }
+
+  html[dir="rtl"] {
+    direction: rtl;
+  }
+
+  html[dir="ltr"] {
+    direction: ltr;
+  }
+}
+
+@layer components {
+  .gradient-text {
+    @apply bg-gradient-to-r from-chinese-red via-chinese-darkRed to-chinese-black bg-clip-text text-transparent;
+  }
+
+  .btn-primary {
+    @apply bg-white border-2 border-chinese-red text-chinese-red px-6 py-3 rounded-lg font-semibold hover:bg-chinese-red hover:text-white transition-all duration-300 transform hover:scale-105;
+  }
+
+  .btn-secondary {
+    @apply bg-chinese-red text-white px-6 py-3 rounded-lg font-semibold hover:bg-chinese-darkRed transition-all duration-300 transform hover:scale-105;
+  }
+
+  .card-hover {
+    @apply transition-all duration-300 hover:shadow-2xl hover:-translate-y-2;
+  }
+
+  .chinese-pattern {
+    background-image: radial-gradient(circle, rgba(255, 215, 0, 0.1) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+
+  .rtl-space-x-2 > * + * {
+    margin-right: 0.5rem;
+  }
+
+  .rtl-space-x-3 > * + * {
+    margin-right: 0.75rem;
+  }
+
+  .rtl-space-x-4 > * + * {
+    margin-right: 1rem;
+  }
+
+  .rtl-space-x-6 > * + * {
+    margin-right: 1.5rem;
+  }
+
+  [dir="rtl"] .rtl-space-x-1 > * + * {
+    margin-right: 0.25rem;
+    margin-left: 0;
+  }
+
+  [dir="rtl"] .rtl-space-x-2 > * + * {
+    margin-right: 0.5rem;
+    margin-left: 0;
+  }
+
+  [dir="rtl"] .rtl-space-x-3 > * + * {
+    margin-right: 0.75rem;
+    margin-left: 0;
+  }
+
+  [dir="rtl"] .rtl-space-x-4 > * + * {
+    margin-right: 1rem;
+    margin-left: 0;
+  }
+
+  [dir="rtl"] .rtl-space-x-6 > * + * {
+    margin-right: 1.5rem;
+    margin-left: 0;
+  }
+}
