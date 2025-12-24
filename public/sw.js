@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 const CACHE_VERSION = 'v5';
+=======
+const CACHE_VERSION = 'v7';
+>>>>>>> f0a58e6 (Initial commit)
 const CACHE_NAME = `lulu-kitchen-${CACHE_VERSION}`;
 const RUNTIME_CACHE = `lulu-runtime-${CACHE_VERSION}`;
 

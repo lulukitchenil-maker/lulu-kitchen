@@ -2,6 +2,10 @@ import { useEffect, useState } from 'react';
 import { X, ShoppingCart } from 'lucide-react';
 import { useLanguage } from '../hooks/useLanguage';
 import { useCart } from '../hooks/useCart';
+<<<<<<< HEAD
+=======
+import CONFIG from '../config/config';
+>>>>>>> f0a58e6 (Initial commit)
 
 interface ExitIntentPopupProps {
   onViewCart: () => void;
@@ -47,7 +51,10 @@ export default function ExitIntentPopup({ onViewCart }: ExitIntentPopupProps) {
   const subtotal = getTotalPrice();
   const shipping = getShippingCost();
   const total = subtotal + shipping;
+<<<<<<< HEAD
   const freeShippingRemaining = 800 - subtotal;
+=======
+>>>>>>> f0a58e6 (Initial commit)
 
   return (
     <>
@@ -82,6 +89,7 @@ export default function ExitIntentPopup({ onViewCart }: ExitIntentPopupProps) {
             <span className="text-gray-600">{t('סכום', 'Subtotal')}</span>
             <span className="font-semibold">₪{subtotal.toFixed(2)}</span>
           </div>
+<<<<<<< HEAD
           {freeShippingRemaining > 0 && (
             <div className="mt-3 p-2 bg-green-50 border border-green-200 rounded text-center">
               <p className="text-sm text-green-800">
@@ -92,6 +100,8 @@ export default function ExitIntentPopup({ onViewCart }: ExitIntentPopupProps) {
               </p>
             </div>
           )}
+=======
+>>>>>>> f0a58e6 (Initial commit)
           <div className="flex justify-between text-lg font-bold mt-3 pt-3 border-t">
             <span>{t('סה"כ', 'Total')}</span>
             <span className="text-chinese-red">₪{total.toFixed(2)}</span>

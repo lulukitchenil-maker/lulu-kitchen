@@ -48,6 +48,24 @@
     margin-right: 0.75rem;
   }
 
+<<<<<<< HEAD
+=======
+  @keyframes confetti {
+    0% {
+      transform: translateY(-100vh) rotate(0deg);
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(100vh) rotate(720deg);
+      opacity: 0;
+    }
+  }
+
+  .animate-confetti {
+    animation: confetti 3s ease-in-out forwards;
+  }
+
+>>>>>>> f0a58e6 (Initial commit)
   .rtl-space-x-4 > * + * {
     margin-right: 1rem;
   }

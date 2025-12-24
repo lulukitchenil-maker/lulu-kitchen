@@ -1,8 +1,14 @@
 import { useEffect } from 'react';
+<<<<<<< HEAD
 import { CheckCircle, ExternalLink, MessageCircle } from 'lucide-react';
 import { useLanguage } from '../hooks/useLanguage';
 import { useCart } from '../hooks/useCart';
 import { createBitPaymentLink, getPayBoxLink } from '../lib/payment';
+=======
+import { CheckCircle } from 'lucide-react';
+import { useLanguage } from '../hooks/useLanguage';
+import { useCart } from '../hooks/useCart';
+>>>>>>> f0a58e6 (Initial commit)
 import type { OrderDetails, CartItem } from '../types';
 
 interface OrderConfirmationProps {
@@ -45,7 +51,11 @@ export default function OrderConfirmation({ isOpen, orderDetails, totalAmount, c
 
     const paymentMethodText = orderDetails.paymentMethod === 'cash' ?
       (language === 'he' ? 'מזומן' : 'Cash') :
+<<<<<<< HEAD
       orderDetails.paymentMethod === 'bit' ? 'Bit' : 'PayBox';
+=======
+      (language === 'he' ? 'תשלום מאובטח' : 'Secure Payment');
+>>>>>>> f0a58e6 (Initial commit)
 
     const deliveryDateTime = orderDetails.deliveryDate && orderDetails.deliveryTime
       ? `${orderDetails.deliveryDate} ${orderDetails.deliveryTime}`
@@ -60,6 +70,7 @@ export default function OrderConfirmation({ isOpen, orderDetails, totalAmount, c
 
   const whatsappLink = `https://api.whatsapp.com/send?phone=972525201978&text=${createWhatsAppOrderMessage()}`;
 
+<<<<<<< HEAD
   const handleBitPayment = () => {
     const bitLink = createBitPaymentLink(totalAmount);
     // Open in new tab for better UX
@@ -72,6 +83,8 @@ export default function OrderConfirmation({ isOpen, orderDetails, totalAmount, c
     window.open(payboxLink, '_blank');
   };
 
+=======
+>>>>>>> f0a58e6 (Initial commit)
   const handleClose = () => {
     clearCart();
     onClose();
@@ -97,6 +110,7 @@ export default function OrderConfirmation({ isOpen, orderDetails, totalAmount, c
               <p><strong>{t('שעת משלוח:', 'Delivery Time:')}</strong> {orderDetails.deliveryTime}</p>
               <p><strong>{t('כתובת:', 'Address:')}</strong> {orderDetails.address}, {orderDetails.city}</p>
               <p><strong>{t('אמצעי תשלום:', 'Payment Method:')}</strong> {
+<<<<<<< HEAD
                 orderDetails.paymentMethod === 'cash' ? t('מזומן', 'Cash') :
                 orderDetails.paymentMethod === 'bit' ? 'Bit' : 'PayBox'
               }</p>
@@ -170,6 +184,18 @@ export default function OrderConfirmation({ isOpen, orderDetails, totalAmount, c
                 </p>
               </>
             )}
+=======
+                orderDetails.paymentMethod === 'cash' ? t('מזומן', 'Cash') : t('תשלום מאובטח', 'Secure Payment')
+              }</p>
+            </div>
+
+            <p className="text-gray-600 mb-6">
+              {t(
+                'תשלום במזומן בעת האספקה. נשלח אליך אישור למייל ולטלפון בקרוב. תודה שבחרת בנו!',
+                'Cash payment upon delivery. Confirmation will be sent to your email and phone. Thank you!'
+              )}
+            </p>
+>>>>>>> f0a58e6 (Initial commit)
 
             <button
               onClick={handleClose}

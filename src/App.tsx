@@ -17,6 +17,12 @@ import AdminReviews from './pages/AdminReviews';
 import AdminAddOns from './pages/AdminAddOns';
 import AdminRecommendations from './pages/AdminRecommendations';
 import AdminVacation from './pages/AdminVacation';
+<<<<<<< HEAD
+=======
+import AdminImages from './pages/AdminImages';
+import ThankYou from './pages/ThankYou';
+import PaymentStatus from './pages/PaymentStatus';
+>>>>>>> f0a58e6 (Initial commit)
 import { LanguageProvider } from './hooks/useLanguage';
 import { CartProvider, useCart } from './hooks/useCart';
 import type { OrderDetails, MenuItem } from './types';
@@ -100,6 +106,15 @@ function Router() {
     case '/terms':
       PageComponent = Terms;
       break;
+<<<<<<< HEAD
+=======
+    case '/thank-you':
+      PageComponent = ThankYou;
+      break;
+    case '/payment-status':
+      PageComponent = PaymentStatus;
+      break;
+>>>>>>> f0a58e6 (Initial commit)
     case '/admin/reviews':
       PageComponent = AdminReviews;
       break;
@@ -112,6 +127,12 @@ function Router() {
     case '/admin/vacation':
       PageComponent = AdminVacation;
       break;
+<<<<<<< HEAD
+=======
+    case '/admin/images':
+      PageComponent = AdminImages;
+      break;
+>>>>>>> f0a58e6 (Initial commit)
     default:
       PageComponent = Home;
   }

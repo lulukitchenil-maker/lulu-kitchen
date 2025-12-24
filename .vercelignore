@@ -1,0 +1,50 @@
+node_modules
+.env.local
+*.log
+.DS_Store
+coverage
+
+# Development files
+*.md
+!README.md
+
+# SQL and migration files (not needed in production)
+*.sql
+supabase/migrations
+
+# Scripts
+*.mjs
+run-migrations.js
+setup-database.mjs
+setup-delivery-data.mjs
+import-streets.mjs
+manual-sync-menu.mjs
+sync-menu.mjs
+check-key.mjs
+standalone-order-processor.js
+
+# Documentation
+CHANGES_SUMMARY.md
+DATABASE_RECOVERY_SUMMARY.md
+DATABASE_SETUP_INSTRUCTIONS.md
+DEPLOYMENT_GUIDE.md
+FINAL_SUMMARY.txt
+GOOGLE_APPS_SCRIPT_DEPLOYMENT_INSTRUCTIONS.md
+GOOGLE_APPS_SCRIPT_INSTRUCTIONS.md
+MENU_MANAGEMENT_GUIDE.md
+ORDER_PROCESSING_SETUP.md
+README_ORDERS.md
+START_HERE.md
+STREETS_IMPORT_GUIDE.md
+URGENT_DATABASE_FIX.md
+URGENT_FIXES_COMPLETED.md
+
+# Sample data
+sample_data.sql
+sample-streets-data.sql
+test_database.sql
+create_all_missing_tables.sql
+
+# Server files (not used in Vercel)
+server/
+google-apps-script.js

@@ -1,6 +1,10 @@
 import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import type { CartItem, MenuItem, AddOn } from '../types';
 import { supabase } from '../lib/supabaseClient';
+<<<<<<< HEAD
+=======
+import CONFIG from '../config/config';
+>>>>>>> f0a58e6 (Initial commit)
 
 interface CartContextType {
   cartItems: CartItem[];
@@ -19,8 +23,13 @@ interface CartContextType {
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 const STORAGE_KEY = 'lulu_k_cart';
+<<<<<<< HEAD
 const FREE_SHIPPING_THRESHOLD = 800;
 const SHIPPING_COST = Number(import.meta.env.VITE_DELIVERY_FEE) || 40;
+=======
+const FREE_SHIPPING_THRESHOLD = CONFIG.FREE_SHIPPING_THRESHOLD;
+const SHIPPING_COST = CONFIG.DELIVERY_FEE;
+>>>>>>> f0a58e6 (Initial commit)
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [cartItems, setCartItems] = useState<CartItem[]>(() => {
@@ -169,4 +178,8 @@ export function useCart() {
     throw new Error('useCart must be used within a CartProvider');
   }
   return context;
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> f0a58e6 (Initial commit)

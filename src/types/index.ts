@@ -75,7 +75,11 @@ export interface OrderDetails {
   apartment?: string;
   floor?: string;
   notes?: string;
+<<<<<<< HEAD
   paymentMethod: 'cash' | 'bit' | 'paybox';
+=======
+  paymentMethod: 'cash' | 'grow';
+>>>>>>> f0a58e6 (Initial commit)
 }
 
 export interface DeliveryArea {

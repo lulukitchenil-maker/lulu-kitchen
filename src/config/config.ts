@@ -18,8 +18,13 @@ export const CONFIG = {
   PAYBOX_URL: import.meta.env.VITE_PAYBOX_URL || 'https://3ydbh.app.link/AQ5ENWbzzVb',
 
   // Delivery
+<<<<<<< HEAD
   DELIVERY_FEE: Number(import.meta.env.VITE_DELIVERY_FEE) || 40,
   FREE_SHIPPING_THRESHOLD: Number(import.meta.env.VITE_FREE_SHIPPING_THRESHOLD) || 800,
+=======
+  DELIVERY_FEE: Number(import.meta.env.VITE_DELIVERY_FEE) || 0,
+  FREE_SHIPPING_THRESHOLD: Number(import.meta.env.VITE_FREE_SHIPPING_THRESHOLD) || 0,
+>>>>>>> f0a58e6 (Initial commit)
 
   // Images
   IMAGES_BASE: import.meta.env.VITE_IMAGES_BASE || 'https://lulu-k.com/images',

@@ -1,12 +1,21 @@
 import { useState, useEffect } from 'react';
+<<<<<<< HEAD
 import { X, Calendar, Clock, MapPin, CreditCard, Mail, Phone, User } from 'lucide-react';
+=======
+import { X, Calendar, Clock, MapPin, CreditCard, Mail, Phone, User, AlertCircle } from 'lucide-react';
+>>>>>>> f0a58e6 (Initial commit)
 import { useLanguage } from '../hooks/useLanguage';
 import { useCart } from '../hooks/useCart';
 import { isValidFullName, isValidEmail, isValidPhone, isValidDeliveryTime, isValidDeliveryDate, getAvailableDeliveryTimes, getMinDeliveryDate } from '../lib/validation';
 import { getCityNames, getStreetSuggestions, isValidDeliveryAddress } from '../lib/deliveryAreas';
 import { submitOrder } from '../lib/api';
+<<<<<<< HEAD
 import { createBitPaymentLink, getPayBoxLink } from '../lib/payment';
 import PaymentInstructionModal from './PaymentInstructionModal';
+=======
+import GrowPaymentModal from './GrowPaymentModal';
+import { supabase } from '../lib/supabase';
+>>>>>>> f0a58e6 (Initial commit)
 import type { OrderDetails } from '../types';
 // מייבאים את כל אובייקט הקונפיגורציה
 import { CONFIG as config } from '../config/config'; 
@@ -32,7 +41,11 @@ export default function OrderForm({ isOpen, onClose, onSubmit }: OrderFormProps)
     houseNumber: '',
     apartment: '',
     notes: '',
+<<<<<<< HEAD
     paymentMethod: 'cash' as 'cash' | 'bit' | 'paybox'
+=======
+    paymentMethod: 'cash' as 'cash' | 'grow'
+>>>>>>> f0a58e6 (Initial commit)
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -42,7 +55,17 @@ export default function OrderForm({ isOpen, onClose, onSubmit }: OrderFormProps)
   const [cities, setCities] = useState<string[]>([]);
   const [, setLoadingCities] = useState(true);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
+<<<<<<< HEAD
   const [pendingOrderDetails, setPendingOrderDetails] = useState<OrderDetails | null>(null);
+=======
+  const [paymentLink, setPaymentLink] = useState<string | null>(null);
+  const [paymentLoading, setPaymentLoading] = useState(false);
+  const [paymentError, setPaymentError] = useState<string | null>(null);
+  const [pendingOrderDetails, setPendingOrderDetails] = useState<OrderDetails | null>(null);
+  const [currentOrderId, setCurrentOrderId] = useState<string | null>(null);
+  const [isVacationActive, setIsVacationActive] = useState(false);
+  const [vacationMessage, setVacationMessage] = useState('');
+>>>>>>> f0a58e6 (Initial commit)
 
   useEffect(() => {
     async function fetchCities() {
@@ -53,6 +76,25 @@ export default function OrderForm({ isOpen, onClose, onSubmit }: OrderFormProps)
     fetchCities();
   }, []);
 
+<<<<<<< HEAD
+=======
+  useEffect(() => {
+    async function checkVacation() {
+      const { data } = await supabase
+        .from('vacation_settings')
+        .select('*')
+        .eq('is_active', true)
+        .maybeSingle();
+
+      if (data) {
+        setIsVacationActive(true);
+        setVacationMessage(data.message_he || 'העסק סגור לחופשה');
+      }
+    }
+    checkVacation();
+  }, []);
+
+>>>>>>> f0a58e6 (Initial commit)
   const handleCityChange = (city: string) => {
     setFormData({ ...formData, city, street: '' });
     setStreetSuggestions([]);
@@ -137,6 +179,14 @@ export default function OrderForm({ isOpen, onClose, onSubmit }: OrderFormProps)
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+<<<<<<< HEAD
+=======
+    if (isVacationActive) {
+      alert(vacationMessage || t('העסק סגור לחופשה כרגע', 'Business is closed for vacation'));
+      return;
+    }
+
+>>>>>>> f0a58e6 (Initial commit)
     const isValid = await validateForm();
     if (!isValid) {
       return;
@@ -160,6 +210,7 @@ export default function OrderForm({ isOpen, onClose, onSubmit }: OrderFormProps)
       paymentMethod: formData.paymentMethod
     };
 
+<<<<<<< HEAD
     // Show payment modal for Bit/PayBox
     if (formData.paymentMethod === 'bit' || formData.paymentMethod === 'paybox') {
       setPendingOrderDetails(orderDetails);
@@ -173,6 +224,139 @@ export default function OrderForm({ isOpen, onClose, onSubmit }: OrderFormProps)
 
   const handlePaymentProceed = async () => {
     setShowPaymentModal(false);
+=======
+    if (formData.paymentMethod === 'grow') {
+      setPendingOrderDetails(orderDetails);
+      await createPaymentLink(orderDetails);
+      return;
+    }
+
+    await processOrder(orderDetails);
+  };
+
+  const createPaymentLink = async (orderDetails: OrderDetails) => {
+    setPaymentLoading(true);
+    setPaymentError(null);
+    setShowPaymentModal(true);
+
+    try {
+      if (currentOrderId) {
+        const { data: existingOrder } = await supabase
+          .from('orders')
+          .select('payment_status')
+          .eq('id', currentOrderId)
+          .maybeSingle();
+
+        if (existingOrder?.payment_status === 'paid') {
+          setPaymentLoading(false);
+          setPaymentError(t('ההזמנה כבר שולמה בהצלחה', 'Order has already been paid successfully'));
+          alert(t('ההזמנה כבר שולמה בהצלחה', 'Order has already been paid successfully'));
+          return;
+        }
+      }
+
+      const subtotal = getTotalPrice();
+      const shipping = getShippingCost();
+      const total = subtotal + shipping;
+
+      console.log('Creating order with data:', {
+        customer_name: orderDetails.fullName,
+        email: orderDetails.email,
+        phone: orderDetails.phone,
+        cartItemsCount: cartItems.length,
+        total,
+        paymentMethod: orderDetails.paymentMethod
+      });
+
+      const sanitizedItems = cartItems.map(item => ({
+        id: item.menuItem.id,
+        name_he: item.menuItem.name_he,
+        name_en: item.menuItem.name_en,
+        price: item.menuItem.price,
+        quantity: item.quantity,
+        selectedAddOns: item.selectedAddOns.map(addon => ({
+          id: addon.id,
+          name_he: addon.name_he,
+          name_en: addon.name_en,
+          price: addon.price
+        }))
+      }));
+
+      const { data: order, error: insertError } = await supabase
+        .from('orders')
+        .insert({
+          customer_name: orderDetails.fullName,
+          email: orderDetails.email,
+          phone: orderDetails.phone,
+          city: orderDetails.city,
+          street: orderDetails.street,
+          house_number: orderDetails.houseNumber,
+          apartment: orderDetails.apartment || '',
+          floor: orderDetails.floor || '',
+          delivery_date: orderDetails.deliveryDate,
+          delivery_time: orderDetails.deliveryTime,
+          notes: orderDetails.notes || '',
+          payment_method: orderDetails.paymentMethod,
+          total_price: total,
+          items: sanitizedItems,
+          status: 'pending',
+          payment_status: 'pending',
+        })
+        .select()
+        .maybeSingle();
+
+      if (insertError) {
+        console.error('Database insert error:', insertError);
+        throw new Error(insertError.message || 'Failed to create order');
+      }
+
+      if (!order) {
+        throw new Error('Order created but no data returned');
+      }
+
+      console.log('Order created successfully:', order.id);
+      setCurrentOrderId(order.id);
+
+      const { createGrowPaymentLink } = await import('../lib/payment');
+      const link = createGrowPaymentLink(order.id, total);
+
+      setPaymentLink(link);
+      setPaymentLoading(false);
+    } catch (error) {
+      console.error('Error creating payment link:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to create payment link';
+      setPaymentError(errorMessage);
+      setPaymentLoading(false);
+      alert(`שגיאה: ${errorMessage}`);
+    }
+  };
+
+  const handlePaymentComplete = async () => {
+    setShowPaymentModal(false);
+    setPaymentLink(null);
+
+    if (currentOrderId) {
+      localStorage.removeItem('lulu_k_cart');
+      sessionStorage.removeItem('lulu_k_cart');
+
+      setFormData({
+        fullName: '',
+        email: '',
+        phone: '',
+        deliveryDate: '',
+        deliveryTime: '',
+        city: '',
+        street: '',
+        houseNumber: '',
+        apartment: '',
+        notes: '',
+        paymentMethod: 'cash'
+      });
+
+      window.location.href = `/payment-status?orderId=${currentOrderId}`;
+    }
+
+>>>>>>> f0a58e6 (Initial commit)
     if (pendingOrderDetails) {
       await processOrder(pendingOrderDetails);
       setPendingOrderDetails(null);
@@ -279,6 +463,21 @@ export default function OrderForm({ isOpen, onClose, onSubmit }: OrderFormProps)
             </div>
 
             <form onSubmit={handleSubmit} className="p-6 space-y-6">
+<<<<<<< HEAD
+=======
+              {isVacationActive && (
+                <div className="bg-red-50 border-2 border-red-500 rounded-lg p-4 mb-6">
+                  <div className="flex items-center gap-3">
+                    <AlertCircle className="w-6 h-6 text-red-600 flex-shrink-0" />
+                    <div>
+                      <p className="font-bold text-red-900">{vacationMessage}</p>
+                      <p className="text-sm text-red-700">לא ניתן לבצע הזמנות כרגע</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+>>>>>>> f0a58e6 (Initial commit)
               <div>
                 <label className="flex items-center gap-2 text-sm font-semibold mb-2">
                   <User className="w-4 h-4" />
@@ -477,6 +676,7 @@ export default function OrderForm({ isOpen, onClose, onSubmit }: OrderFormProps)
                     <span>{t('מזומן', 'Cash')}</span>
                   </label>
 
+<<<<<<< HEAD
                   <label className="flex items-center gap-3 p-4 border rounded-lg cursor-pointer hover:bg-gray-50">
                     <input
                       type="radio"
@@ -500,6 +700,25 @@ export default function OrderForm({ isOpen, onClose, onSubmit }: OrderFormProps)
                     />
                     <span>PayBox</span>
                   </label>
+=======
+                  <label className="flex items-center gap-3 p-4 border-2 border-chinese-red rounded-lg cursor-pointer hover:bg-red-50">
+                    <input
+                      type="radio"
+                      name="payment"
+                      value="grow"
+                      checked={formData.paymentMethod === 'grow'}
+                      onChange={(e) => setFormData({ ...formData, paymentMethod: e.target.value as any })}
+                      className="w-4 h-4"
+                    />
+                    <div className="flex-1">
+                      <div className="font-semibold">{t('תשלום מאובטח', 'Secure Payment')}</div>
+                      <div className="text-sm text-gray-600">
+                        Bit • {t('כרטיס אשראי', 'Credit Card')} • Google Pay • Apple Pay • {t('העברה', 'Transfer')}
+                      </div>
+                    </div>
+                  </label>
+
+>>>>>>> f0a58e6 (Initial commit)
                 </div>
               </div>
 
@@ -510,9 +729,13 @@ export default function OrderForm({ isOpen, onClose, onSubmit }: OrderFormProps)
                 </div>
                 <div className="flex justify-between">
                   <span>{t('משלוח', 'Shipping')}</span>
+<<<<<<< HEAD
                   <span className={shipping === 0 ? 'text-green-600 font-semibold' : ''}>
                     {shipping === 0 ? t('חינם!', 'Free!') : `₪${shipping.toFixed(2)}`}
                   </span>
+=======
+                  <span>₪{shipping.toFixed(2)}</span>
+>>>>>>> f0a58e6 (Initial commit)
                 </div>
                 <div className="flex justify-between text-xl font-bold pt-2 border-t">
                   <span>{t('סה"כ לתשלום', 'Total')}</span>
@@ -532,11 +755,16 @@ export default function OrderForm({ isOpen, onClose, onSubmit }: OrderFormProps)
         </div>
       </div>
 
+<<<<<<< HEAD
       <PaymentInstructionModal
+=======
+      <GrowPaymentModal
+>>>>>>> f0a58e6 (Initial commit)
         isOpen={showPaymentModal}
         onClose={() => {
           setShowPaymentModal(false);
           setPendingOrderDetails(null);
+<<<<<<< HEAD
         }}
         paymentMethod={formData.paymentMethod === 'bit' ? 'bit' : 'paybox'}
         paymentLink={
@@ -546,6 +774,18 @@ export default function OrderForm({ isOpen, onClose, onSubmit }: OrderFormProps)
         }
         amount={getTotalPrice() + getShippingCost()}
         onProceed={handlePaymentProceed}
+=======
+          setPaymentLink(null);
+          setPaymentError(null);
+          setCurrentOrderId(null);
+        }}
+        paymentLink={paymentLink}
+        amount={getTotalPrice() + getShippingCost()}
+        loading={paymentLoading}
+        error={paymentError}
+        onComplete={handlePaymentComplete}
+        orderId={currentOrderId || undefined}
+>>>>>>> f0a58e6 (Initial commit)
       />
     </>
   );

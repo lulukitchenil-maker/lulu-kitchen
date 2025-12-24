@@ -4,6 +4,10 @@ import { useCart } from '../hooks/useCart';
 import { useLanguage } from '../hooks/useLanguage';
 import Recommendations from './Recommendations';
 import type { MenuItem } from '../types';
+<<<<<<< HEAD
+=======
+import CONFIG from '../config/config';
+>>>>>>> f0a58e6 (Initial commit)
 
 interface CartProps {
   isOpen: boolean;
@@ -37,9 +41,12 @@ export default function Cart({ isOpen, onClose, onCheckout, allMenuItems = [] }:
       setTimeout(() => setCouponMessage(''), 3000);
     }
   };
+<<<<<<< HEAD
   const freeShippingThreshold = 800;
   const freeShippingRemaining = freeShippingThreshold - subtotal;
   const progressPercentage = Math.min((subtotal / freeShippingThreshold) * 100, 100);
+=======
+>>>>>>> f0a58e6 (Initial commit)
 
   return (
     <>
@@ -78,6 +85,7 @@ export default function Cart({ isOpen, onClose, onCheckout, allMenuItems = [] }:
                   />
                 )}
 
+<<<<<<< HEAD
                 {freeShippingRemaining > 0 ? (
                   <div className="mb-4 p-4 bg-gradient-to-r from-green-50 to-blue-50 border-2 border-green-200 rounded-xl">
                     <div className="flex items-center gap-2 mb-2">
@@ -108,6 +116,8 @@ export default function Cart({ isOpen, onClose, onCheckout, allMenuItems = [] }:
                   </div>
                 )}
 
+=======
+>>>>>>> f0a58e6 (Initial commit)
                 <div className="space-y-4">
                   {cartItems.map((item, index) => {
                     const itemTotal = (item.menuItem.price + item.selectedAddOns.reduce((sum, addon) => sum + addon.price, 0)) * item.quantity;
@@ -231,9 +241,13 @@ export default function Cart({ isOpen, onClose, onCheckout, allMenuItems = [] }:
                   )}
                   <div className="flex justify-between text-gray-600">
                     <span>{t('משלוח', 'Shipping')}</span>
+<<<<<<< HEAD
                     <span className={shipping === 0 ? 'text-green-600 font-semibold' : ''}>
                       {shipping === 0 ? t('חינם!', 'Free!') : `₪${shipping.toFixed(2)}`}
                     </span>
+=======
+                    <span>₪{shipping.toFixed(2)}</span>
+>>>>>>> f0a58e6 (Initial commit)
                   </div>
                   <div className="flex justify-between text-xl font-bold pt-2 border-t">
                     <span>{t('סה"כ', 'Total')}</span>
