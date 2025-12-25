@@ -172,4 +172,116 @@ function App() {
   );
 }
 
+
+export default App;
+
+  const handleOrderSubmit = (details: OrderDetails) => {
+    const subtotal = getTotalPrice();
+    const shipping = getShippingCost();
+    const total = subtotal + shipping;
+    setOrderTotal(total);
+    setOrderDetails(details);
+    setIsOrderFormOpen(false);
+    setIsConfirmationOpen(true);
+  };
+
+  const handleConfirmationClose = () => {
+    setIsConfirmationOpen(false);
+    setOrderDetails(null);
+  };
+
+  let PageComponent: React.ComponentType<any>;
+  let pageProps: any = {};
+
+  switch (currentPath) {
+    case '/menu':
+      PageComponent = Menu;
+      pageProps = {
+        onMenuItemsLoad: setAllMenuItems
+      };
+      break;
+    case '/about':
+      PageComponent = About;
+      break;
+    case '/reviews':
+      PageComponent = Reviews;
+      break;
+    case '/contact':
+      PageComponent = Contact;
+      break;
+    case '/accessibility':
+      PageComponent = Accessibility;
+      break;
+    case '/terms':
+      PageComponent = Terms;
+      break;
+    case '/thank-you':
+      PageComponent = ThankYou;
+      break;
+    case '/payment-status':
+      PageComponent = PaymentStatus;
+      break;
+    case '/admin/reviews':
+      PageComponent = AdminReviews;
+      break;
+    case '/admin/addons':
+      PageComponent = AdminAddOns;
+      break;
+    case '/admin/recommendations':
+      PageComponent = AdminRecommendations;
+      break;
+    case '/admin/vacation':
+      PageComponent = AdminVacation;
+      break;
+    case '/admin/images':
+      PageComponent = AdminImages;
+      break;
+    default:
+      PageComponent = Home;
+  }
+
+  return (
+    <>
+      <Header onCartClick={() => setIsCartOpen(true)} />
+      <VacationBanner />
+      <main>
+        <PageComponent {...pageProps} />
+      </main>
+      <Footer />
+      <Cart
+        isOpen={isCartOpen}
+        onClose={() => setIsCartOpen(false)}
+        onCheckout={handleCheckout}
+        allMenuItems={allMenuItems}
+      />
+      <OrderForm
+        isOpen={isOrderFormOpen}
+        onClose={() => setIsOrderFormOpen(false)}
+        onSubmit={handleOrderSubmit}
+      />
+      {orderDetails && (
+        <OrderConfirmation
+          isOpen={isConfirmationOpen}
+          orderDetails={orderDetails}
+          totalAmount={orderTotal}
+          onClose={handleConfirmationClose}
+        />
+      )}
+      <ExitIntentPopup onViewCart={() => setIsCartOpen(true)} />
+    </>
+  );
+}
+
+function App() {
+  return (
+    <LanguageProvider>
+      <CartProvider>
+        <div className="min-h-screen bg-gray-50">
+          <Router />
+        </div>
+      </CartProvider>
+    </LanguageProvider>
+  );
+}
+
 export default App;
