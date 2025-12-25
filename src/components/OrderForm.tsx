@@ -1,21 +1,15 @@
 import { useState, useEffect } from 'react';
-
 import { X, Calendar, Clock, MapPin, CreditCard, Mail, Phone, User } from 'lucide-react';
-
 import { X, Calendar, Clock, MapPin, CreditCard, Mail, Phone, User, AlertCircle } from 'lucide-react';
-
 import { useLanguage } from '../hooks/useLanguage';
 import { useCart } from '../hooks/useCart';
 import { isValidFullName, isValidEmail, isValidPhone, isValidDeliveryTime, isValidDeliveryDate, getAvailableDeliveryTimes, getMinDeliveryDate } from '../lib/validation';
 import { getCityNames, getStreetSuggestions, isValidDeliveryAddress } from '../lib/deliveryAreas';
 import { submitOrder } from '../lib/api';
-
 import { createBitPaymentLink, getPayBoxLink } from '../lib/payment';
 import PaymentInstructionModal from './PaymentInstructionModal';
-
 import GrowPaymentModal from './GrowPaymentModal';
 import { supabase } from '../lib/supabase';
-
 import type { OrderDetails } from '../types';
 // מייבאים את כל אובייקט הקונפיגורציה
 import { CONFIG as config } from '../config/config'; 
@@ -55,9 +49,7 @@ export default function OrderForm({ isOpen, onClose, onSubmit }: OrderFormProps)
   const [cities, setCities] = useState<string[]>([]);
   const [, setLoadingCities] = useState(true);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
-
   const [pendingOrderDetails, setPendingOrderDetails] = useState<OrderDetails | null>(null);
-
   const [paymentLink, setPaymentLink] = useState<string | null>(null);
   const [paymentLoading, setPaymentLoading] = useState(false);
   const [paymentError, setPaymentError] = useState<string | null>(null);
