@@ -23,7 +23,7 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 
 const STORAGE_KEY = 'lulu_k_cart';
 
-/** ✅ מקור אמת אחד בלבד */
+// ✅ מקור אחד בלבד לקבועים
 const FREE_SHIPPING_THRESHOLD = CONFIG.FREE_SHIPPING_THRESHOLD;
 const SHIPPING_COST = CONFIG.DELIVERY_FEE;
 
@@ -48,12 +48,17 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   }, [cartItems]);
 
-  const addToCart = (menuItem: MenuItem, selectedAddOns: AddOn[], quantity: number) => {
+  const addToCart = (
+    menuItem: MenuItem,
+    selectedAddOns: AddOn[],
+    quantity: number
+  ) => {
     setCartItems(prev => {
       const existingIndex = prev.findIndex(
         item =>
           item.menuItem.id === menuItem.id &&
-          JSON.stringify(item.selectedAddOns) === JSON.stringify(selectedAddOns)
+          JSON.stringify(item.selectedAddOns) ===
+            JSON.stringify(selectedAddOns)
       );
 
       if (existingIndex >= 0) {
@@ -67,7 +72,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
   };
 
   const removeFromCart = (itemId: string) => {
-    setCartItems(prev => prev.filter(item => item.menuItem.id !== itemId));
+    setCartItems(prev =>
+      prev.filter(item => item.menuItem.id !== itemId)
+    );
   };
 
   const updateQuantity = (itemId: string, quantity: number) => {
@@ -78,7 +85,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
     setCartItems(prev =>
       prev.map(item =>
-        item.menuItem.id === itemId ? { ...item, quantity } : item
+        item.menuItem.id === itemId
+          ? { ...item, quantity }
+          : item
       )
     );
   };
@@ -87,6 +96,28 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setCartItems([]);
     setCouponDiscount(0);
     setAppliedCoupon(null);
+  };
+
+  const getTotalPrice = () => {
+    return cartItems.reduce((total, item) => {
+      const addOnsPrice = item.selectedAddOns.reduce(
+        (sum, addon) => sum + addon.price,
+        0
+      );
+      return total + (item.menuItem.price + addOnsPrice) * item.quantity;
+    }, 0);
+  };
+
+  const getTotalItems = () => {
+    return cartItems.reduce(
+      (total, item) => total + item.quantity,
+      0
+    );
+  };
+
+  const getShippingCost = () => {
+    const subtotal = getTotalPrice();
+    return subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_COST;
   };
 
   const applyCoupon = async (code: string) => {
@@ -103,14 +134,20 @@ export function CartProvider({ children }: { children: ReactNode }) {
       }
 
       const now = new Date();
-      const expiresAt = coupon.expires_at ? new Date(coupon.expires_at) : null;
+      const expiresAt = coupon.expires_at
+        ? new Date(coupon.expires_at)
+        : null;
 
       if (expiresAt && now > expiresAt) {
         return { success: false, discount: 0, message: 'הקופון פג תוקף' };
       }
 
       if (coupon.usage_limit && coupon.used_count >= coupon.usage_limit) {
-        return { success: false, discount: 0, message: 'הקופון הגיע למכסת השימוש' };
+        return {
+          success: false,
+          discount: 0,
+          message: 'הקופון הגיע למכסת השימוש'
+        };
       }
 
       const subtotal = getTotalPrice();
@@ -132,24 +169,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
       };
     } catch (error) {
       console.error('Error applying coupon:', error);
-      return { success: false, discount: 0, message: 'שגיאה בהפעלת הקופון' };
+      return {
+        success: false,
+        discount: 0,
+        message: 'שגיאה בהפעלת הקופון'
+      };
     }
   };
-
-  const getTotalPrice = () =>
-    cartItems.reduce((total, item) => {
-      const addOnsPrice = item.selectedAddOns.reduce(
-        (sum, addon) => sum + addon.price,
-        0
-      );
-      return total + (item.menuItem.price + addOnsPrice) * item.quantity;
-    }, 0);
-
-  const getTotalItems = () =>
-    cartItems.reduce((total, item) => total + item.quantity, 0);
-
-  const getShippingCost = () =>
-    getTotalPrice() >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_COST;
 
   return (
     <CartContext.Provider
