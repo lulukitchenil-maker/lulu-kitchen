@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { X, ShoppingCart } from 'lucide-react';
 import { useLanguage } from '../hooks/useLanguage';
 import { useCart } from '../hooks/useCart';
-
 import CONFIG from '../config/config';
 
 
