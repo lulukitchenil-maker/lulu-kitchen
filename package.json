@@ -17,10 +17,7 @@
     "dotenv": "^17.2.3",
     "lucide-react": "^0.344.0",
     "node-fetch": "^3.3.2",
-<<<<<<< HEAD
-=======
     "qrcode.react": "^4.2.0",
->>>>>>> f0a58e6 (Initial commit)
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
