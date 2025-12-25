@@ -745,7 +745,6 @@ export default function OrderForm({ isOpen, onClose, onSubmit }: OrderFormProps)
 
 
       <PaymentInstructionModal
-=======
       <GrowPaymentModal
 
         isOpen={showPaymentModal}
@@ -762,7 +761,6 @@ export default function OrderForm({ isOpen, onClose, onSubmit }: OrderFormProps)
         }
         amount={getTotalPrice() + getShippingCost()}
         onProceed={handlePaymentProceed}
-=======
           setPaymentLink(null);
           setPaymentError(null);
           setCurrentOrderId(null);
