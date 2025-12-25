@@ -1,21 +1,21 @@
 import { useState, useEffect } from 'react';
-<<<<<<< HEAD
+
 import { X, Calendar, Clock, MapPin, CreditCard, Mail, Phone, User } from 'lucide-react';
-=======
+
 import { X, Calendar, Clock, MapPin, CreditCard, Mail, Phone, User, AlertCircle } from 'lucide-react';
->>>>>>> f0a58e6 (Initial commit)
+
 import { useLanguage } from '../hooks/useLanguage';
 import { useCart } from '../hooks/useCart';
 import { isValidFullName, isValidEmail, isValidPhone, isValidDeliveryTime, isValidDeliveryDate, getAvailableDeliveryTimes, getMinDeliveryDate } from '../lib/validation';
 import { getCityNames, getStreetSuggestions, isValidDeliveryAddress } from '../lib/deliveryAreas';
 import { submitOrder } from '../lib/api';
-<<<<<<< HEAD
+
 import { createBitPaymentLink, getPayBoxLink } from '../lib/payment';
 import PaymentInstructionModal from './PaymentInstructionModal';
-=======
+
 import GrowPaymentModal from './GrowPaymentModal';
 import { supabase } from '../lib/supabase';
->>>>>>> f0a58e6 (Initial commit)
+
 import type { OrderDetails } from '../types';
 // מייבאים את כל אובייקט הקונפיגורציה
 import { CONFIG as config } from '../config/config'; 
@@ -41,11 +41,11 @@ export default function OrderForm({ isOpen, onClose, onSubmit }: OrderFormProps)
     houseNumber: '',
     apartment: '',
     notes: '',
-<<<<<<< HEAD
+
     paymentMethod: 'cash' as 'cash' | 'bit' | 'paybox'
-=======
+
     paymentMethod: 'cash' as 'cash' | 'grow'
->>>>>>> f0a58e6 (Initial commit)
+
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -55,9 +55,9 @@ export default function OrderForm({ isOpen, onClose, onSubmit }: OrderFormProps)
   const [cities, setCities] = useState<string[]>([]);
   const [, setLoadingCities] = useState(true);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
-<<<<<<< HEAD
+
   const [pendingOrderDetails, setPendingOrderDetails] = useState<OrderDetails | null>(null);
-=======
+
   const [paymentLink, setPaymentLink] = useState<string | null>(null);
   const [paymentLoading, setPaymentLoading] = useState(false);
   const [paymentError, setPaymentError] = useState<string | null>(null);
@@ -65,7 +65,7 @@ export default function OrderForm({ isOpen, onClose, onSubmit }: OrderFormProps)
   const [currentOrderId, setCurrentOrderId] = useState<string | null>(null);
   const [isVacationActive, setIsVacationActive] = useState(false);
   const [vacationMessage, setVacationMessage] = useState('');
->>>>>>> f0a58e6 (Initial commit)
+
 
   useEffect(() => {
     async function fetchCities() {
@@ -76,8 +76,7 @@ export default function OrderForm({ isOpen, onClose, onSubmit }: OrderFormProps)
     fetchCities();
   }, []);
 
-<<<<<<< HEAD
-=======
+
   useEffect(() => {
     async function checkVacation() {
       const { data } = await supabase
@@ -94,7 +93,7 @@ export default function OrderForm({ isOpen, onClose, onSubmit }: OrderFormProps)
     checkVacation();
   }, []);
 
->>>>>>> f0a58e6 (Initial commit)
+
   const handleCityChange = (city: string) => {
     setFormData({ ...formData, city, street: '' });
     setStreetSuggestions([]);
@@ -179,14 +178,13 @@ export default function OrderForm({ isOpen, onClose, onSubmit }: OrderFormProps)
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-<<<<<<< HEAD
-=======
+
     if (isVacationActive) {
       alert(vacationMessage || t('העסק סגור לחופשה כרגע', 'Business is closed for vacation'));
       return;
     }
 
->>>>>>> f0a58e6 (Initial commit)
+
     const isValid = await validateForm();
     if (!isValid) {
       return;
@@ -210,7 +208,7 @@ export default function OrderForm({ isOpen, onClose, onSubmit }: OrderFormProps)
       paymentMethod: formData.paymentMethod
     };
 
-<<<<<<< HEAD
+
     // Show payment modal for Bit/PayBox
     if (formData.paymentMethod === 'bit' || formData.paymentMethod === 'paybox') {
       setPendingOrderDetails(orderDetails);
@@ -224,7 +222,7 @@ export default function OrderForm({ isOpen, onClose, onSubmit }: OrderFormProps)
 
   const handlePaymentProceed = async () => {
     setShowPaymentModal(false);
-=======
+
     if (formData.paymentMethod === 'grow') {
       setPendingOrderDetails(orderDetails);
       await createPaymentLink(orderDetails);
@@ -356,7 +354,7 @@ export default function OrderForm({ isOpen, onClose, onSubmit }: OrderFormProps)
       window.location.href = `/payment-status?orderId=${currentOrderId}`;
     }
 
->>>>>>> f0a58e6 (Initial commit)
+
     if (pendingOrderDetails) {
       await processOrder(pendingOrderDetails);
       setPendingOrderDetails(null);
@@ -463,8 +461,7 @@ export default function OrderForm({ isOpen, onClose, onSubmit }: OrderFormProps)
             </div>
 
             <form onSubmit={handleSubmit} className="p-6 space-y-6">
-<<<<<<< HEAD
-=======
+
               {isVacationActive && (
                 <div className="bg-red-50 border-2 border-red-500 rounded-lg p-4 mb-6">
                   <div className="flex items-center gap-3">
@@ -477,7 +474,7 @@ export default function OrderForm({ isOpen, onClose, onSubmit }: OrderFormProps)
                 </div>
               )}
 
->>>>>>> f0a58e6 (Initial commit)
+
               <div>
                 <label className="flex items-center gap-2 text-sm font-semibold mb-2">
                   <User className="w-4 h-4" />
@@ -676,7 +673,7 @@ export default function OrderForm({ isOpen, onClose, onSubmit }: OrderFormProps)
                     <span>{t('מזומן', 'Cash')}</span>
                   </label>
 
-<<<<<<< HEAD
+
                   <label className="flex items-center gap-3 p-4 border rounded-lg cursor-pointer hover:bg-gray-50">
                     <input
                       type="radio"
@@ -700,7 +697,7 @@ export default function OrderForm({ isOpen, onClose, onSubmit }: OrderFormProps)
                     />
                     <span>PayBox</span>
                   </label>
-=======
+
                   <label className="flex items-center gap-3 p-4 border-2 border-chinese-red rounded-lg cursor-pointer hover:bg-red-50">
                     <input
                       type="radio"
@@ -718,7 +715,7 @@ export default function OrderForm({ isOpen, onClose, onSubmit }: OrderFormProps)
                     </div>
                   </label>
 
->>>>>>> f0a58e6 (Initial commit)
+
                 </div>
               </div>
 
@@ -729,13 +726,13 @@ export default function OrderForm({ isOpen, onClose, onSubmit }: OrderFormProps)
                 </div>
                 <div className="flex justify-between">
                   <span>{t('משלוח', 'Shipping')}</span>
-<<<<<<< HEAD
+
                   <span className={shipping === 0 ? 'text-green-600 font-semibold' : ''}>
                     {shipping === 0 ? t('חינם!', 'Free!') : `₪${shipping.toFixed(2)}`}
                   </span>
-=======
+
                   <span>₪{shipping.toFixed(2)}</span>
->>>>>>> f0a58e6 (Initial commit)
+
                 </div>
                 <div className="flex justify-between text-xl font-bold pt-2 border-t">
                   <span>{t('סה"כ לתשלום', 'Total')}</span>
@@ -755,16 +752,16 @@ export default function OrderForm({ isOpen, onClose, onSubmit }: OrderFormProps)
         </div>
       </div>
 
-<<<<<<< HEAD
+
       <PaymentInstructionModal
 =======
       <GrowPaymentModal
->>>>>>> f0a58e6 (Initial commit)
+
         isOpen={showPaymentModal}
         onClose={() => {
           setShowPaymentModal(false);
           setPendingOrderDetails(null);
-<<<<<<< HEAD
+
         }}
         paymentMethod={formData.paymentMethod === 'bit' ? 'bit' : 'paybox'}
         paymentLink={
@@ -785,7 +782,7 @@ export default function OrderForm({ isOpen, onClose, onSubmit }: OrderFormProps)
         error={paymentError}
         onComplete={handlePaymentComplete}
         orderId={currentOrderId || undefined}
->>>>>>> f0a58e6 (Initial commit)
+
       />
     </>
   );
