@@ -1,9 +1,7 @@
 import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import type { CartItem, MenuItem, AddOn } from '../types';
 import { supabase } from '../lib/supabaseClient';
-
 import CONFIG from '../config/config';
-
 
 interface CartContextType {
   cartItems: CartItem[];
@@ -14,7 +12,9 @@ interface CartContextType {
   getTotalPrice: () => number;
   getTotalItems: () => number;
   getShippingCost: () => number;
-  applyCoupon: (code: string) => Promise<{ success: boolean; discount: number; message: string }>;
+  applyCoupon: (
+    code: string
+  ) => Promise<{ success: boolean; discount: number; message: string }>;
   couponDiscount: number;
   appliedCoupon: string | null;
 }
@@ -23,12 +23,9 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 
 const STORAGE_KEY = 'lulu_k_cart';
 
-const FREE_SHIPPING_THRESHOLD = 800;
-const SHIPPING_COST = Number(import.meta.env.VITE_DELIVERY_FEE) || 40;
-
+/** ✅ מקור אמת אחד בלבד */
 const FREE_SHIPPING_THRESHOLD = CONFIG.FREE_SHIPPING_THRESHOLD;
 const SHIPPING_COST = CONFIG.DELIVERY_FEE;
-
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [cartItems, setCartItems] = useState<CartItem[]>(() => {
@@ -53,9 +50,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const addToCart = (menuItem: MenuItem, selectedAddOns: AddOn[], quantity: number) => {
     setCartItems(prev => {
-      const existingIndex = prev.findIndex(item =>
-        item.menuItem.id === menuItem.id &&
-        JSON.stringify(item.selectedAddOns) === JSON.stringify(selectedAddOns)
+      const existingIndex = prev.findIndex(
+        item =>
+          item.menuItem.id === menuItem.id &&
+          JSON.stringify(item.selectedAddOns) === JSON.stringify(selectedAddOns)
       );
 
       if (existingIndex >= 0) {
@@ -78,9 +76,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
       return;
     }
 
-    setCartItems(prev => prev.map(item =>
-      item.menuItem.id === itemId ? { ...item, quantity } : item
-    ));
+    setCartItems(prev =>
+      prev.map(item =>
+        item.menuItem.id === itemId ? { ...item, quantity } : item
+      )
+    );
   };
 
   const clearCart = () => {
@@ -89,7 +89,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setAppliedCoupon(null);
   };
 
-  const applyCoupon = async (code: string): Promise<{ success: boolean; discount: number; message: string }> => {
+  const applyCoupon = async (code: string) => {
     try {
       const { data: coupon, error } = await supabase
         .from('coupons')
@@ -136,36 +136,37 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const getTotalPrice = () => {
-    return cartItems.reduce((total, item) => {
-      const addOnsPrice = item.selectedAddOns.reduce((sum, addon) => sum + addon.price, 0);
+  const getTotalPrice = () =>
+    cartItems.reduce((total, item) => {
+      const addOnsPrice = item.selectedAddOns.reduce(
+        (sum, addon) => sum + addon.price,
+        0
+      );
       return total + (item.menuItem.price + addOnsPrice) * item.quantity;
     }, 0);
-  };
 
-  const getTotalItems = () => {
-    return cartItems.reduce((total, item) => total + item.quantity, 0);
-  };
+  const getTotalItems = () =>
+    cartItems.reduce((total, item) => total + item.quantity, 0);
 
-  const getShippingCost = () => {
-    const subtotal = getTotalPrice();
-    return subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_COST;
-  };
+  const getShippingCost = () =>
+    getTotalPrice() >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_COST;
 
   return (
-    <CartContext.Provider value={{
-      cartItems,
-      addToCart,
-      removeFromCart,
-      updateQuantity,
-      clearCart,
-      getTotalPrice,
-      getTotalItems,
-      getShippingCost,
-      applyCoupon,
-      couponDiscount,
-      appliedCoupon
-    }}>
+    <CartContext.Provider
+      value={{
+        cartItems,
+        addToCart,
+        removeFromCart,
+        updateQuantity,
+        clearCart,
+        getTotalPrice,
+        getTotalItems,
+        getShippingCost,
+        applyCoupon,
+        couponDiscount,
+        appliedCoupon
+      }}
+    >
       {children}
     </CartContext.Provider>
   );
@@ -173,12 +174,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
 export function useCart() {
   const context = useContext(CartContext);
-  if (context === undefined) {
+  if (!context) {
     throw new Error('useCart must be used within a CartProvider');
   }
   return context;
-
 }
-
-}
-
