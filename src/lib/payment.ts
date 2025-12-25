@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 import CONFIG from '../config/config';
 
 export interface PaymentConfig {
@@ -46,7 +46,7 @@ export function getPayBoxLink(amount?: number): string {
 
 export function openPaymentLink(url: string): void {
   window.location.href = url;
-=======
+
 
 export function createGrowPaymentLink(orderId: string, amount: number): string {
   const GROW_STATIC_LINK = "https://pay.grow.link/ca1e9aa48a6c038af81a0b4e7d025628-Mjg2MjI1OA";
@@ -58,5 +58,5 @@ export function createGrowPaymentLink(orderId: string, amount: number): string {
 
 export function isMobileDevice(): boolean {
   return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
->>>>>>> f0a58e6 (Initial commit)
+
 }
