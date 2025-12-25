@@ -4,7 +4,6 @@ import { useCart } from '../hooks/useCart';
 import { useLanguage } from '../hooks/useLanguage';
 import Recommendations from './Recommendations';
 import type { MenuItem } from '../types';
-
 import CONFIG from '../config/config';
 
 
