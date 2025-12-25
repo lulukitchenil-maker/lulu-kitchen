@@ -16,11 +16,9 @@ export default function Contact() {
   });
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-
   const phoneNumber = '052-520-1978';
   const whatsappNumber = '972525201978';
   const email = 'lulu.kitchen.il@gmail.com';
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
