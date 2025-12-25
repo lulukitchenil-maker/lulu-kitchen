@@ -185,7 +185,6 @@ export async function getDeliveryDetails(cityName: string): Promise<{
       fee: city.delivery_fee / 100, // Convert agorot to shekels
 
       freeDeliveryThreshold: 800, // ₪800 free delivery (hardcoded as per requirements)
-=======
       freeDeliveryThreshold: 0, // No free delivery threshold
 
       minOrder: 0, // No minimum order
