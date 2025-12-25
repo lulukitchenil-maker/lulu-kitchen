@@ -146,7 +146,6 @@ export default function Contact() {
                           {t('אזור משלוחים', 'Delivery Area')}
                         </h3>
                         <p className="text-gray-700">{t('ירושלים והסביבה', 'Jerusalem and surroundings')}</p>
-
                         <p className="text-sm text-gray-600">{t('משלוח חינם מעל ₪800', 'Free delivery over ₪800')}</p>
 
                       </div>
