@@ -41,7 +41,6 @@ export default function OrderForm({ isOpen, onClose, onSubmit }: OrderFormProps)
     paymentMethod: 'cash' as 'cash' | 'grow'
 
   });
-
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [streetSuggestions, setStreetSuggestions] = useState<string[]>([]);
   const [submitting, setSubmitting] = useState(false);
