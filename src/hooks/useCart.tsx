@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import type { CartItem, MenuItem, AddOn } from '../types';
 import { supabase } from '../lib/supabaseClient';
-import CONFIG from '../config/config';
+import { CONFIG } from '../config/config';
 
 interface CartContextType {
   cartItems: CartItem[];
@@ -12,18 +12,20 @@ interface CartContextType {
   getTotalPrice: () => number;
   getTotalItems: () => number;
   getShippingCost: () => number;
+  getFinalTotal: () => number;
   applyCoupon: (
     code: string
   ) => Promise<{ success: boolean; discount: number; message: string }>;
   couponDiscount: number;
   appliedCoupon: string | null;
+  amountToFreeShipping: number;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 const STORAGE_KEY = 'lulu_k_cart';
 
-// ✅ מקור אחד בלבד לקבועים
+// ✅ מקור אחד בלבד לקבועים מה-CONFIG המאובטח
 const FREE_SHIPPING_THRESHOLD = CONFIG.FREE_SHIPPING_THRESHOLD;
 const SHIPPING_COST = CONFIG.DELIVERY_FEE;
 
@@ -72,9 +74,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   };
 
   const removeFromCart = (itemId: string) => {
-    setCartItems(prev =>
-      prev.filter(item => item.menuItem.id !== itemId)
-    );
+    setCartItems(prev => prev.filter(item => item.menuItem.id !== itemId));
   };
 
   const updateQuantity = (itemId: string, quantity: number) => {
@@ -85,9 +85,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
     setCartItems(prev =>
       prev.map(item =>
-        item.menuItem.id === itemId
-          ? { ...item, quantity }
-          : item
+        item.menuItem.id === itemId ? { ...item, quantity } : item
       )
     );
   };
@@ -108,17 +106,24 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }, 0);
   };
 
-  const getTotalItems = () => {
-    return cartItems.reduce(
-      (total, item) => total + item.quantity,
-      0
-    );
-  };
-
+  // ✅ חישוב ה-shipping אחרי הנחה
   const getShippingCost = () => {
-    const subtotal = getTotalPrice();
+    const subtotal = getTotalPrice() - couponDiscount;
     return subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_COST;
   };
+
+  // סך הכל כולל משלוח
+  const getFinalTotal = () => {
+    return getTotalPrice() - couponDiscount + getShippingCost();
+  };
+
+  // כמה נשאר למשלוח חינם (להצגת upsell)
+  const amountToFreeShipping = Math.max(
+    0,
+    FREE_SHIPPING_THRESHOLD - (getTotalPrice() - couponDiscount)
+  );
+
+  const getTotalItems = () => cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
   const applyCoupon = async (code: string) => {
     try {
@@ -134,9 +139,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       }
 
       const now = new Date();
-      const expiresAt = coupon.expires_at
-        ? new Date(coupon.expires_at)
-        : null;
+      const expiresAt = coupon.expires_at ? new Date(coupon.expires_at) : null;
 
       if (expiresAt && now > expiresAt) {
         return { success: false, discount: 0, message: 'הקופון פג תוקף' };
@@ -188,9 +191,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
         getTotalPrice,
         getTotalItems,
         getShippingCost,
+        getFinalTotal,
         applyCoupon,
         couponDiscount,
-        appliedCoupon
+        appliedCoupon,
+        amountToFreeShipping
       }}
     >
       {children}
@@ -200,8 +205,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
 export function useCart() {
   const context = useContext(CartContext);
-  if (!context) {
-    throw new Error('useCart must be used within a CartProvider');
-  }
+  if (!context) throw new Error('useCart must be used within a CartProvider');
   return context;
 }
