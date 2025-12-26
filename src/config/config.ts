@@ -1,40 +1,14 @@
-export const CONFIG = {
-  // Admin Contact
-  ADMIN_EMAILS: ['lulu@lulu-k.com', 'lulu.kitchen.il@gmail.com'],
-  BUSINESS_PHONE: import.meta.env.VITE_BUSINESS_PHONE || '052-520-1978',
-  WHATSAPP_NUMBER: import.meta.env.VITE_WHATSAPP_NUMBER || '972525201978',
-
-  // Database
-  SUPABASE_URL: import.meta.env.VITE_SUPABASE_URL,
-  SUPABASE_ANON_KEY: import.meta.env.VITE_SUPABASE_ANON_KEY,
-
-  // Google Apps Script (for email notifications)
-  GOOGLE_SCRIPT_URL: import.meta.env.VITE_FORM_ENDPOINT || '',
-  GOOGLE_SHEET_ID: import.meta.env.VITE_SHEET_ID || '1EoqYXiIDOgkYJ0-WMiz7mJRYFnyHYwPnA0IcvtwGzBA',
-
-  // Payment
-  BIT_URL: import.meta.env.VITE_BIT_URL || 'https://www.bitpay.co.il/app/me/C822FDFE-1C69-4F92-B57B-09635D465B9D',
-  BIT_PHONE: import.meta.env.VITE_BIT_PHONE || '0525201978',
-  PAYBOX_URL: import.meta.env.VITE_PAYBOX_URL || 'https://3ydbh.app.link/AQ5ENWbzzVb',
-
-  // Delivery
-
-  DELIVERY_FEE: Number(import.meta.env.VITE_DELIVERY_FEE) || 40,
+const CONFIG = {
+  MAKE_WEBHOOK_URL: "https://hook.us2.make.com/629pwhd8m8g1atv1scf398y5f4k5h5m1",
+  APP_NAME: "Lulu Kitchen",
+  APP_DESCRIPTION: "Authentic Asian Flavors",
+  PHONE: "050-724-4482",
+  EMAIL: "info@lulukitchen.co.il",
+  ADDRESS: "Tel Aviv, Israel",
+  INSTAGRAM_URL: "https://instagram.com/lulu_kitchen_il",
+  FACEBOOK_URL: "https://facebook.com/lulukitchenil",
+  DELIVERY_FEE: Number(import.meta.env.VITE_DELIVERY_FEE) || 35,
   FREE_SHIPPING_THRESHOLD: Number(import.meta.env.VITE_FREE_SHIPPING_THRESHOLD) || 800,
-
-  DELIVERY_FEE: Number(import.meta.env.VITE_DELIVERY_FEE) || 0,
-  FREE_SHIPPING_THRESHOLD: Number(import.meta.env.VITE_FREE_SHIPPING_THRESHOLD) || 0,
-
-
-  // Images
-  IMAGES_BASE: import.meta.env.VITE_IMAGES_BASE || 'https://lulu-k.com/images',
-
-  // Currency
-  CURRENCY: import.meta.env.VITE_CURRENCY || '₪',
-} as const;
-
-// 👇 השורה הזו צריכה להיות כאן, מחוץ לאובייקט
-export const MAKE_WEBHOOK_URL =
-  'https://hook.eu2.make.com/v5whuwdy5v2xymn3n70cl9429piybpoa';
-
+};
 export default CONFIG;
+export { CONFIG };
