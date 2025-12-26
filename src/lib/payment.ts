@@ -10,6 +10,12 @@ export interface PaymentDetails {
   transactionId?: string;
 }
 
+// הפונקציה שהייתה חסרה וגרמה לשגיאה
+export const isMobileDevice = () => {
+  if (typeof window === 'undefined') return false;
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+};
+
 export function createBitPaymentLink(amount: number): string {
   return `https://bitpay.co.il/app/pay-me?p=0507244482&a=${amount}`;
 }
