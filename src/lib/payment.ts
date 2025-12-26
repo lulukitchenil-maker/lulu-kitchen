@@ -11,22 +11,16 @@ export interface PaymentDetails {
 }
 
 export function createBitPaymentLink(amount: number): string {
-  // מספר הטלפון של העסק לקבלת תשלום בביט
   return `https://bitpay.co.il/app/pay-me?p=0507244482&a=${amount}`;
 }
 
 export function getPayBoxLink(): string {
-  // לינק לקבוצת פייבוקס במידה וקיים
   return "https://payboxapp.page.link/example";
 }
 
 export function createGrowPaymentLink(orderId: string, amount: number): string {
   const GROW_STATIC_LINK = "https://pay.grow.link/ca1e9aa48a6c038af81a0b4e7d025628-Mjg2MjI1OA";
-  
-  // יצירת לינק חזור כדי שהלקוח יחזור לאתר אחרי התשלום
   const callbackUrl = `${window.location.origin}/payment-status?orderId=${orderId}`;
-  
-  // בניית ה-URL עם הפרמטרים הנדרשים ל-Grow
   return `${GROW_STATIC_LINK}?amount=${amount}&external_id=${orderId}&redirect_url=${encodeURIComponent(callbackUrl)}`;
 }
 
