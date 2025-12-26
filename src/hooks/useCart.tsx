@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import type { CartItem, MenuItem, AddOn } from '../types';
 import { supabase } from '../lib/supabaseClient';
-import { CONFIG } from '../config/config';
+import CONFIG from '../config/config';
 
 interface CartContextType {
   cartItems: CartItem[];
@@ -12,20 +12,17 @@ interface CartContextType {
   getTotalPrice: () => number;
   getTotalItems: () => number;
   getShippingCost: () => number;
-  getFinalTotal: () => number;
   applyCoupon: (
     code: string
   ) => Promise<{ success: boolean; discount: number; message: string }>;
   couponDiscount: number;
   appliedCoupon: string | null;
-  amountToFreeShipping: number;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
-
 const STORAGE_KEY = 'lulu_k_cart';
 
-// ✅ מקור אחד בלבד לקבועים מה-CONFIG המאובטח
+// ✅ מקור אחד בלבד - ללא כפילויות
 const FREE_SHIPPING_THRESHOLD = CONFIG.FREE_SHIPPING_THRESHOLD;
 const SHIPPING_COST = CONFIG.DELIVERY_FEE;
 
@@ -50,25 +47,18 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   }, [cartItems]);
 
-  const addToCart = (
-    menuItem: MenuItem,
-    selectedAddOns: AddOn[],
-    quantity: number
-  ) => {
+  const addToCart = (menuItem: MenuItem, selectedAddOns: AddOn[], quantity: number) => {
     setCartItems(prev => {
       const existingIndex = prev.findIndex(
         item =>
           item.menuItem.id === menuItem.id &&
-          JSON.stringify(item.selectedAddOns) ===
-            JSON.stringify(selectedAddOns)
+          JSON.stringify(item.selectedAddOns) === JSON.stringify(selectedAddOns)
       );
-
       if (existingIndex >= 0) {
         const updated = [...prev];
         updated[existingIndex].quantity += quantity;
         return updated;
       }
-
       return [...prev, { menuItem, selectedAddOns, quantity }];
     });
   };
@@ -82,11 +72,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
       removeFromCart(itemId);
       return;
     }
-
     setCartItems(prev =>
-      prev.map(item =>
-        item.menuItem.id === itemId ? { ...item, quantity } : item
-      )
+      prev.map(item => (item.menuItem.id === itemId ? { ...item, quantity } : item))
     );
   };
 
@@ -97,33 +84,19 @@ export function CartProvider({ children }: { children: ReactNode }) {
   };
 
   const getTotalPrice = () => {
-    return cartItems.reduce((total, item) => {
-      const addOnsPrice = item.selectedAddOns.reduce(
-        (sum, addon) => sum + addon.price,
-        0
-      );
+    const subtotal = cartItems.reduce((total, item) => {
+      const addOnsPrice = item.selectedAddOns.reduce((sum, addon) => sum + addon.price, 0);
       return total + (item.menuItem.price + addOnsPrice) * item.quantity;
     }, 0);
+    return Math.max(0, subtotal - couponDiscount);
   };
 
-  // ✅ חישוב ה-shipping אחרי הנחה
+  const getTotalItems = () => cartItems.reduce((total, item) => total + item.quantity, 0);
+
   const getShippingCost = () => {
-    const subtotal = getTotalPrice() - couponDiscount;
-    return subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_COST;
+    const totalAfterDiscount = getTotalPrice();
+    return totalAfterDiscount >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_COST;
   };
-
-  // סך הכל כולל משלוח
-  const getFinalTotal = () => {
-    return getTotalPrice() - couponDiscount + getShippingCost();
-  };
-
-  // כמה נשאר למשלוח חינם (להצגת upsell)
-  const amountToFreeShipping = Math.max(
-    0,
-    FREE_SHIPPING_THRESHOLD - (getTotalPrice() - couponDiscount)
-  );
-
-  const getTotalItems = () => cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
   const applyCoupon = async (code: string) => {
     try {
@@ -134,68 +107,35 @@ export function CartProvider({ children }: { children: ReactNode }) {
         .eq('active', true)
         .single();
 
-      if (error || !coupon) {
-        return { success: false, discount: 0, message: 'קוד קופון לא תקין' };
-      }
+      if (error || !coupon) return { success: false, discount: 0, message: 'קוד קופון לא תקין' };
 
       const now = new Date();
       const expiresAt = coupon.expires_at ? new Date(coupon.expires_at) : null;
+      if (expiresAt && now > expiresAt) return { success: false, discount: 0, message: 'הקופון פג תוקף' };
 
-      if (expiresAt && now > expiresAt) {
-        return { success: false, discount: 0, message: 'הקופון פג תוקף' };
-      }
+      const subtotal = cartItems.reduce((total, item) => {
+        const addOnsPrice = item.selectedAddOns.reduce((sum, addon) => sum + addon.price, 0);
+        return total + (item.menuItem.price + addOnsPrice) * item.quantity;
+      }, 0);
 
-      if (coupon.usage_limit && coupon.used_count >= coupon.usage_limit) {
-        return {
-          success: false,
-          discount: 0,
-          message: 'הקופון הגיע למכסת השימוש'
-        };
-      }
-
-      const subtotal = getTotalPrice();
       let discount = 0;
-
-      if (coupon.discount_percent) {
-        discount = (subtotal * coupon.discount_percent) / 100;
-      } else if (coupon.discount_amount) {
-        discount = coupon.discount_amount;
-      }
+      if (coupon.discount_percent) discount = (subtotal * coupon.discount_percent) / 100;
+      else if (coupon.discount_amount) discount = coupon.discount_amount;
 
       setCouponDiscount(discount);
       setAppliedCoupon(code.toUpperCase());
-
-      return {
-        success: true,
-        discount,
-        message: `הקופון הופעל! חסכת ₪${discount.toFixed(2)}`
-      };
+      return { success: true, discount, message: 'הקופון הופעל!' };
     } catch (error) {
-      console.error('Error applying coupon:', error);
-      return {
-        success: false,
-        discount: 0,
-        message: 'שגיאה בהפעלת הקופון'
-      };
+      return { success: false, discount: 0, message: 'שגיאה בהפעלת הקופון' };
     }
   };
 
   return (
     <CartContext.Provider
       value={{
-        cartItems,
-        addToCart,
-        removeFromCart,
-        updateQuantity,
-        clearCart,
-        getTotalPrice,
-        getTotalItems,
-        getShippingCost,
-        getFinalTotal,
-        applyCoupon,
-        couponDiscount,
-        appliedCoupon,
-        amountToFreeShipping
+        cartItems, addToCart, removeFromCart, updateQuantity, clearCart,
+        getTotalPrice, getTotalItems, getShippingCost, applyCoupon,
+        couponDiscount, appliedCoupon
       }}
     >
       {children}
